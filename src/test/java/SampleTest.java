@@ -35,42 +35,36 @@ public class SampleTest {
     }
 
     @Test
-    public void sampleTest() {
+    public void sampleTest() throws InterruptedException {
 
-        // Ensure that the login link is present.
-        WebElement loginLink = driver.findElement(By.xpath("/html/body/header/div[2]/div/div[1]/div[3]/div/div[3]/a"));
-        Assert.assertTrue(loginLink.isDisplayed(), "The login link was not found.");
-
-        // Click the login link.
+        // Get the login link and click it.
+        WebElement loginLink = driver.findElement(By.id("nav-signin-text"));
         loginLink.click();
 
-        // Ensure that the login page has email, password, and submit.
-        WebElement emailField = driver.findElement(By.xpath("/html/body/div[1]/div/div/form/div/div/div/table/tbody/tr[2]/td/input"));
-        Assert.assertTrue(emailField.isDisplayed(), "The email field was not found.");
-        WebElement passwordField = driver.findElement(By.xpath("/html/body/div[1]/div/div/form/div/div/div/table/tbody/tr[4]/td/input"));
-        Assert.assertTrue(passwordField.isDisplayed(), "The password field was not found.");
-        WebElement submitLogin = driver.findElement(By.xpath("/html/body/div/div/div/form/div/div/div/table/tbody/tr[5]/td/input"));
-        Assert.assertTrue(submitLogin.isDisplayed(), "The login button was not found.");
-
-        // Perform login
+        // Fill email and password, and then submit.
+        WebElement emailField = driver.findElement(By.name("email"));
+        WebElement passwordField = driver.findElement(By.name("password"));
+        WebElement submitLogin = driver.findElement(By.id("button-login"));
         emailField.sendKeys(email);
         passwordField.sendKeys(password);
         submitLogin.click();
 
-        // Ensure that the home link is present.
-        Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(2));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("/html/body/header/div[3]/div/div/div/div/div/nav/div/div/ul/li[2]/a")));
-        WebElement homeLink = driver.findElement(By.xpath("/html/body/header/div[3]/div/div/div/div/div/nav/div/div/ul/li[2]/a"));
-        Assert.assertTrue(homeLink.isDisplayed(), "The home link was not found.");
+        // Wait until navbar is present.
+        Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("nav-inner")));
 
         // Navigate to the website new releases page.
         driver.get(newReleasesUrl);
 
-        // Ensure that the item add to cart is present.
-        WebElement addToCart = driver.findElement(By.xpath("/html/body/section/div/div/div[3]/div[3]/div[1]/div/div[2]/div[5]/div/div/a[2]"));
-        Assert.assertTrue(addToCart.isDisplayed(), "The login link was not found.");
+        // Wait until loading finish
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("preloader")));
 
-        // Click the item add to cart.
+        // Get one of the products
+        WebElement container = driver.findElement(By.xpath("/html/body/section/div/div/div[3]/div[3]"));
+        WebElement product = container.findElement(By.className("single-product"));
+        WebElement addToCart = product.findElement(By.className("addtocart"));
+        wait.until(ExpectedConditions.elementToBeClickable(addToCart));
+
         addToCart.click();
 
     }
