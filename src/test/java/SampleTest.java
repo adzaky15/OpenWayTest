@@ -7,8 +7,10 @@ import org.testng.annotations.*;
 
 public class SampleTest {
 
+    String email = "tnuoccalaeraton25@gmail.com";
+    String password = "Test5Email25";
     WebDriver driver;
-    String baseUrl = "https://jignect.tech/";
+    String baseUrl = "https://www.periplus.com/ ";
 
     @BeforeMethod
     public void setUpBrowser() {
@@ -26,23 +28,32 @@ public class SampleTest {
     @Test
     public void sampleTest() {
 
-        // Ensure that the user is redirected to the homepage of the JigNect Website.
-        WebElement textOnHomePage = driver.findElement(By.xpath("//div[contains(text(),'Perfecting Your Software ')]"));
-        Assert.assertTrue(textOnHomePage.isDisplayed(), "The user hasn't arrived at the JigNect website's main page.");
+        // Ensure that the login link is present.
+        WebElement loginLink = driver.findElement(By.xpath("/html/body/header/div[2]/div/div[1]/div[3]/div/div[3]/a"));
+        Assert.assertTrue(loginLink.isDisplayed(), "The login link was not found.");
 
-        // Navigate to the QA Blogs page by clicking on it from the website's header section.
-        WebElement qaBlogsHeaderText = driver.findElement(By.xpath("//div[@id='site-header']//a[contains(text(),'QA Blogs')]"));
-        qaBlogsHeaderText.click();
+        // Click the login link.
+        loginLink.click();
 
-        // Confirm that the user is currently on the QA Blogs page.
-        WebElement headerTextFromQaBlogsPage = driver.findElement(By.xpath("//p[contains(text(),'Software Testing')]"));
-        Assert.assertTrue(headerTextFromQaBlogsPage.isDisplayed(), "The user hasn't arrived at the QA Blogs page.");
+        // Ensure that the login page has email, password, and submit.
+        WebElement emailField = driver.findElement(By.xpath("/html/body/div[1]/div/div/form/div/div/div/table/tbody/tr[2]/td/input"));
+        Assert.assertTrue(emailField.isDisplayed(), "The email field was not found.");
+        WebElement passwordField = driver.findElement(By.xpath("/html/body/div[1]/div/div/form/div/div/div/table/tbody/tr[4]/td/input"));
+        Assert.assertTrue(passwordField.isDisplayed(), "The password field was not found.");
+        WebElement submitLogin = driver.findElement(By.xpath("/html/body/div/div/div/form/div/div/div/table/tbody/tr[5]/td/input"));
+        Assert.assertTrue(submitLogin.isDisplayed(), "The login button was not found.");
+
+        // Perform login
+        emailField.sendKeys(email);
+        passwordField.sendKeys(password);
+        submitLogin.click();
+
     }
 
     @AfterMethod
     public void closeBrowser() {
 
         // Terminate the browser.
-        driver.quit();
+//        driver.quit();
     }
 }
