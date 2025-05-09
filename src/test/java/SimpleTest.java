@@ -34,7 +34,7 @@ public class SimpleTest {
     }
 
     @Test
-    public void sampleTest() throws InterruptedException {
+    public void sampleTest() {
 
         // Get the login link and click it.
         WebElement loginLink = driver.findElement(By.id("nav-signin-text"));
