@@ -14,6 +14,8 @@ import java.util.concurrent.TimeUnit;
 
 public class SimpleTest {
 
+    boolean cleanUpAfter = true;
+
     String email = "tnuoccalaeraton25@gmail.com";
     String password = "Test5Email25";
     WebDriver driver;
@@ -75,7 +77,7 @@ public class SimpleTest {
         WebElement productName = product.findElement(By.className("title-product-cat"));
         WebElement productLink = productName.findElement(By.xpath(".//h3/a"));
         String productUrl = productLink.getDomProperty("href");
-        System.out.println(productUrl);
+        System.out.println("Target URL: " + productUrl);
 
         // Navigate to the website checkout page.
         driver.get(baseUrl + checkoutPath);
@@ -93,7 +95,7 @@ public class SimpleTest {
             WebElement checkoutLink = checkoutName.findElement(By.xpath(".//a"));
             String checkoutUrl = checkoutLink.getDomProperty("href");
 
-            Assert.assertNotNull(productUrl);
+            Assert.assertNotNull(productUrl, "Target URL was null");
             if (productUrl.equals(checkoutUrl)) {
                 System.out.println("Matching URL Found: " + checkoutUrl);
                 isExist = true;
@@ -101,11 +103,16 @@ public class SimpleTest {
             }
         }
 
-        Assert.assertTrue(isExist);
+        Assert.assertTrue(isExist, "Matching URL was not found");
     }
 
     @AfterMethod
     public void closeBrowser() throws InterruptedException {
+
+        // Skip if no cleanup required
+        if (!cleanUpAfter) {
+            return;
+        }
 
         // Remove the checkout item after 10 seconds
         TimeUnit.SECONDS.sleep(10);
