@@ -14,10 +14,11 @@ import java.util.concurrent.TimeUnit;
 
 public class SimpleTest {
 
+    // YOU CAN CHANGE THIS IF NEEDED
     boolean cleanUpAfter = true;
-
     String email = "tnuoccalaeraton25@gmail.com";
     String password = "Test5Email25";
+
     WebDriver driver;
     String baseUrl = "https://www.periplus.com/";
     String newReleasePath = "index.php?route=product/category&anl=103";
