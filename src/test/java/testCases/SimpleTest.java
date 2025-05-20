@@ -1,3 +1,5 @@
+package testCases;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -7,6 +9,7 @@ import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.*;
+import pages.LoginPage;
 
 import java.time.Duration;
 import java.util.List;
@@ -14,7 +17,6 @@ import java.util.concurrent.TimeUnit;
 
 public class SimpleTest {
 
-    // YOU CAN CHANGE THIS IF NEEDED
     boolean cleanUpAfter = true;
     String email = "tnuoccalaeraton25@gmail.com";
     String password = "Test5Email25";
@@ -33,7 +35,7 @@ public class SimpleTest {
         driver = new ChromeDriver();
 
         // Set implicit wait
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+//        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 
         // Maximize the browser window size.
         driver.manage().window().maximize();
@@ -42,24 +44,14 @@ public class SimpleTest {
         driver.get(baseUrl);
     }
 
-    @Test
-    public void sampleTest() {
+    @Test(description = "add to cart from new releases")
+    public void addToCartTest() {
 
-        // Get the login link and click it.
-        WebElement loginLink = driver.findElement(By.id("nav-signin-text"));
-        loginLink.click();
+        driver = SimpleTestHelper.validLoginSequence(driver, email, password);
 
-        // Fill email and password, and then submit.
-        WebElement emailField = driver.findElement(By.name("email"));
-        WebElement passwordField = driver.findElement(By.name("password"));
-        WebElement submitLogin = driver.findElement(By.id("button-login"));
-        emailField.sendKeys(email);
-        passwordField.sendKeys(password);
-        submitLogin.click();
-
-        // Wait until navbar is present.
+//        // Wait until navbar is present.
         Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("nav-inner")));
+//        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("nav-inner")));
 
         // Navigate to the website new releases page.
         driver.get(baseUrl + newReleasePath);
@@ -121,6 +113,7 @@ public class SimpleTest {
             WebElement removeButton = confirmedCheckout.findElement(By.className("btn-cart-remove"));
             removeButton.click();
         }
+        confirmedCheckout = null;
 
         // Terminate the browser.
         driver.quit();
