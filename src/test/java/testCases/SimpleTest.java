@@ -9,7 +9,6 @@ import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.*;
-import pages.LoginPage;
 
 import java.time.Duration;
 import java.util.List;
@@ -34,9 +33,6 @@ public class SimpleTest {
         // Initialize ChromeDriver.
         driver = new ChromeDriver();
 
-        // Set implicit wait
-//        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-
         // Maximize the browser window size.
         driver.manage().window().maximize();
 
@@ -46,8 +42,7 @@ public class SimpleTest {
 
     @Test(description = "add to cart from new releases")
     public void addToCartTest() {
-
-        driver = SimpleTestHelper.validLoginSequence(driver, email, password);
+         SimpleTestHelper.validLoginSequence(driver, email, password);
 
 //        // Wait until navbar is present.
         Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(20));

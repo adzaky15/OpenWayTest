@@ -1,12 +1,13 @@
 package testCases;
 
-import elements.Preloader;
 import org.openqa.selenium.WebDriver;
+import org.testng.Assert;
+import pages.IndexPage;
 import pages.LoginPage;
 
 public class SimpleTestHelper {
-    public static WebDriver validLoginSequence(WebDriver driver, String email, String password) {
-        LoginPage loginPage = new LoginPage(driver);
-        return loginPage.loginValidUser(email, password).getDriver();
+    public static void validLoginSequence(WebDriver driver, String email, String password) {
+        IndexPage indexPage = new LoginPage(driver).loginValidUser(email, password);
+        Assert.assertTrue(indexPage.verifyLogin(), "login sequence failed");
     }
 }

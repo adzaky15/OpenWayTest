@@ -1,5 +1,6 @@
 package pages;
 
+import elements.Preloader;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
@@ -36,6 +37,8 @@ public class LoginPage {
         driver.findElement(emailBy).sendKeys(email);
         driver.findElement(passwordBy).sendKeys(password);
         driver.findElement(signinBy).click();
+
+        Preloader.waitPreloader(driver);
 
         return new IndexPage(driver);
     }
