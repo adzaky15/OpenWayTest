@@ -23,11 +23,21 @@ public class NewReleasesPage {
         this.driver = driver;
     }
 
+    /**
+     * Return first item on list
+     *
+     * @return WebElement object
+     */
     public WebElement getFirstItem() {
         WebElement productList = driver.findElement(productListBy);
         return productList.findElement(productBy);
     }
 
+    /**
+     * Add item to cart
+     *
+     * @param product - product to add
+     */
     public void addItemToCart(WebElement product) {
         Preloader.waitPreloader(driver);
         WebElement addToCart = product.findElement(addToCartBy);

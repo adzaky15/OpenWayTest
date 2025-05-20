@@ -29,8 +29,8 @@ public class LoginPage {
     /**
      * Login as valid user
      *
-     * @param email
-     * @param password
+     * @param email - valid email
+     * @param password - valid password
      * @return AccountPage object
      */
     public IndexPage loginValidUser(String email, String password) {

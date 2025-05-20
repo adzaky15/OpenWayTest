@@ -23,6 +23,12 @@ public class CartPage {
         this.driver = driver;
     }
 
+    /**
+     * Get item from cart
+     *
+     * @param productUrl - change later
+     * @return WebElement object
+     */
     public WebElement getCartItem(String productUrl) {
         List<WebElement> checkoutItems = driver.findElements(checkoutItemsBy);
 
@@ -41,6 +47,11 @@ public class CartPage {
         return null;
     }
 
+    /**
+     * Remove item from cart
+     *
+     * @param item - item to remove
+     */
     public void removeCartItem(WebElement item) {
         WebElement removeButton = item.findElement(removeButtonBy);
         removeButton.click();
