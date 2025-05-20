@@ -1,31 +1,25 @@
 package testCases;
 
+import elements.Preloader;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Wait;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.*;
+import pages.CartPage;
+import pages.NewReleasesPage;
 
-import java.time.Duration;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class SimpleTest {
-
-    boolean cleanUpAfter = true;
     String email = "tnuoccalaeraton25@gmail.com";
     String password = "Test5Email25";
 
     WebDriver driver;
     String baseUrl = "https://www.periplus.com/";
-    String newReleasePath = "index.php?route=product/category&anl=103";
-    String checkoutPath = "checkout/cart";
 
-    WebElement confirmedCheckout;
+    WebElement tempChosenItem; // Item to remove later
 
     @BeforeMethod
     public void setUpBrowser() {
@@ -42,73 +36,32 @@ public class SimpleTest {
 
     @Test(description = "add to cart from new releases")
     public void addToCartTest() {
-         SimpleTestHelper.validLoginSequence(driver, email, password);
+        SimpleTestHelper.validLoginSequence(driver, email, password);
+        WebElement product = SimpleTestHelper.getItemNotInCart(driver);
 
-//        // Wait until navbar is present.
-        Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-//        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("nav-inner")));
-
-        // Navigate to the website new releases page.
-        driver.get(baseUrl + newReleasePath);
-
-        // Wait until loading finish
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("preloader")));
-
-        // Get one of the products
-        WebElement productList = driver.findElement(By.xpath("/html/body/section/div/div/div[3]/div[3]"));
-        WebElement product = productList.findElement(By.className("single-product"));
-        WebElement addToCart = product.findElement(By.className("addtocart"));
-        wait.until(ExpectedConditions.elementToBeClickable(addToCart));
-
-        addToCart.click();
+        NewReleasesPage newReleasesPage = new NewReleasesPage(driver);
+        newReleasesPage.addItemToCart(product);
 
         WebElement productName = product.findElement(By.className("title-product-cat"));
         WebElement productLink = productName.findElement(By.xpath(".//h3/a"));
         String productUrl = productLink.getDomProperty("href");
         System.out.println("Target URL: " + productUrl);
 
-        // Navigate to the website checkout page.
-        driver.get(baseUrl + checkoutPath);
-
-        // Wait until loading finish
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("preloader")));
-
-        // Get products from cart
-        List<WebElement> checkoutProducts = driver.findElements(By.className("row-cart-product"));
-
-        // Check if item exists
-        boolean isExist = false;
-        for (WebElement checkoutItem: checkoutProducts) {
-            WebElement checkoutName = checkoutItem.findElement(By.className("product-name"));
-            WebElement checkoutLink = checkoutName.findElement(By.xpath(".//a"));
-            String checkoutUrl = checkoutLink.getDomProperty("href");
-
-            Assert.assertNotNull(productUrl, "Target URL was null");
-            if (productUrl.equals(checkoutUrl)) {
-                System.out.println("Matching URL Found: " + checkoutUrl);
-                isExist = true;
-                confirmedCheckout = checkoutItem;
-            }
-        }
-
-        Assert.assertTrue(isExist, "Matching URL was not found");
+        Preloader.waitPreloader(driver);
+        CartPage cartPage = new CartPage(driver);
+        tempChosenItem = cartPage.getCartItem(productUrl);
+        Assert.assertNotNull(tempChosenItem, "Matching URL was not found");
     }
 
     @AfterMethod
     public void closeBrowser() throws InterruptedException {
-
-        // Skip if no cleanup required
-        if (!cleanUpAfter) {
-            return;
-        }
-
         // Remove the checkout item after 10 seconds
         TimeUnit.SECONDS.sleep(10);
-        if (confirmedCheckout != null) {
-            WebElement removeButton = confirmedCheckout.findElement(By.className("btn-cart-remove"));
-            removeButton.click();
+        if (tempChosenItem != null) {
+            CartPage cartPage = new CartPage(driver);
+            cartPage.removeCartItem(tempChosenItem);
         }
-        confirmedCheckout = null;
+        tempChosenItem = null;
 
         // Terminate the browser.
         driver.quit();
