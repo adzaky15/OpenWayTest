@@ -18,7 +18,7 @@ public class SimpleTest {
     WebDriver driver;
     String baseUrl = "https://www.periplus.com/";
 
-    WebElement tempChosenItem; // Item to remove later
+    ItemAttr tempItemAttr; // Item to remove later
 
     @BeforeMethod
     public void setUpBrowser() {
@@ -35,27 +35,35 @@ public class SimpleTest {
 
     @Test(description = "add to cart from new releases")
     public void addToCartTest() {
+        // given
         SimpleTestHelper.validLoginSequence(driver, email, password);
         WebElement product = SimpleTestHelper.getItemNotInCart(driver);
 
+        // when
         NewReleasesPage newReleasesPage = new NewReleasesPage(driver);
         newReleasesPage.addItemToCart(product);
 
+        // then
         ItemAttr productAttr = newReleasesPage.saveAttributes(product);
         CartPage cartPage = new CartPage(driver);
-        tempChosenItem = cartPage.getCartItem(productAttr);
-        Assert.assertNotNull(tempChosenItem, "Matching item was not found");
+        WebElement item = cartPage.getCartItem(productAttr);
+        Assert.assertNotNull(item, "Matching item was not found");
+
+        tempItemAttr = cartPage.saveAttributes(item);
+        Assert.assertEquals(productAttr.title, tempItemAttr.title, "Product title does not match");
+        Assert.assertEquals(productAttr.url, tempItemAttr.url, "Product url does not match");
+        Assert.assertEquals(productAttr.price, tempItemAttr.price, "Product price does not match");
+        Assert.assertEquals(productAttr.quantity, tempItemAttr.quantity, "Product quantity does not match");
     }
 
     @AfterMethod
     public void closeBrowser() throws InterruptedException {
         // Remove the checkout item after 10 seconds
         TimeUnit.SECONDS.sleep(10);
-        if (tempChosenItem != null) {
-            CartPage cartPage = new CartPage(driver);
-            cartPage.removeCartItem(tempChosenItem);
+        if (tempItemAttr != null) {
+            SimpleTestHelper.removeItemByAttr(driver, tempItemAttr);
+            tempItemAttr = null;
         }
-        tempChosenItem = null;
 
         // Terminate the browser.
         driver.quit();

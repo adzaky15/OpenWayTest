@@ -9,6 +9,7 @@ import org.openqa.selenium.WebElement;
 public class NewReleasesPage {
     protected WebDriver driver;
     String pageUrl = "https://www.periplus.com/index.php?route=product/category&anl=103";
+    int addToCartInc = 1;
 
     // <div class="row row-category row-categor-grid"></div>
     private final By productListBy = By.xpath("/html/body/section/div/div/div[3]/div[3]");
@@ -61,7 +62,7 @@ public class NewReleasesPage {
      * Save attributes of product
      *
      * @param product - product which attributes to save
-     * @return ProductCard object
+     * @return ItemAttr object
      */
     public ItemAttr saveAttributes(WebElement product) {
         WebElement productName = product.findElement(productNameBy).findElement(productLinkBy);
@@ -71,6 +72,6 @@ public class NewReleasesPage {
         String url = productName.getDomProperty("href");
         String price = productPrice.getDomProperty("innerText");
 
-        return new ItemAttr(title, url, price);
+        return new ItemAttr(title, url, price, addToCartInc);
     }
 }

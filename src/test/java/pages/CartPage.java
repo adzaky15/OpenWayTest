@@ -1,5 +1,6 @@
 package pages;
 
+import com.google.common.primitives.Ints;
 import elements.ItemAttr;
 import elements.Preloader;
 import org.openqa.selenium.By;
@@ -7,6 +8,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
+import java.util.Optional;
 
 public class CartPage {
     protected WebDriver driver;
@@ -25,6 +27,8 @@ public class CartPage {
     private final By itemCardBy = By.xpath("./../..");
     // <div class="row"></div>
     private final By itemPriceBy = By.xpath(".//div[3]");
+    // <input type="text" class="input-number text-center" data-min="1" data-max="500" name="quantity[43518459]" value="3" size="3" id="qty_43518459" onchange="update_total(43518459)">
+    private final By itemQuantityBy = By.className("input-number");
 
     public CartPage(WebDriver driver) {
         if (!pageUrl.equals(driver.getCurrentUrl())) {
@@ -37,15 +41,14 @@ public class CartPage {
     /**
      * Get item from cart
      *
-     * @param product - change later
+     * @param product - product attributes to find
      * @return WebElement object
      */
     public WebElement getCartItem(ItemAttr product) {
         List<WebElement> cartItems = driver.findElements(checkoutItemsBy);
 
         for (WebElement cartItem : cartItems) {
-            ItemAttr item = saveAttributes(cartItem);
-            if (compareItemWithProduct(item, product)) {
+            if (compareItemWithProduct(saveAttributes(cartItem), product)) {
                 return cartItem;
             }
         }
@@ -66,33 +69,39 @@ public class CartPage {
     }
 
     /**
-     * Save attributes of product
+     * Save attributes of item
      *
-     * @param item - product which attributes to save
-     * @return ProductCard object
+     * @param item - item which attributes to save
+     * @return ItemAttr object
      */
-    private ItemAttr saveAttributes(WebElement item) {
+    public ItemAttr saveAttributes(WebElement item) {
         WebElement itemName = item.findElement(itemNameBy);
         WebElement itemLink = itemName.findElement(itemLinkBy);
-        WebElement itemPrice = itemName.findElement(itemCardBy).findElement(itemPriceBy);
+        WebElement itemCard = itemName.findElement(itemCardBy);
+        WebElement itemPrice = itemCard.findElement(itemPriceBy);
+        WebElement itemQuantity = itemCard.findElement(itemQuantityBy);
 
         String title = itemLink.getDomProperty("innerText");
         String url = itemLink.getDomProperty("href");
         String price = itemPrice.getDomProperty("innerText");
+        int quantity = Optional.ofNullable(itemQuantity.getDomProperty("value"))
+                .map(Ints::tryParse)
+                .orElse(0);
 
-        return new ItemAttr(title, url, price);
+        return new ItemAttr(title, url, price, quantity);
     }
 
     /**
      * Compare cart item attributes with product attributes
      *
-     * @param cartItem    - item attributes from cart
-     * @param itemAttr - product attributes to compare
+     * @param cartItemAttr    - cart item attributes from cart
+     * @param productAttr - product attributes to compare
      * @return true if equal
      */
-    private boolean compareItemWithProduct(ItemAttr cartItem, ItemAttr itemAttr) {
-        return nonEmptyEqual(cartItem.title, itemAttr.title) &&
-                nonEmptyEqual(cartItem.url, itemAttr.url);
+    private boolean compareItemWithProduct(ItemAttr cartItemAttr, ItemAttr productAttr) {
+        return nonEmptyEqual(cartItemAttr.title, productAttr.title) &&
+                nonEmptyEqual(cartItemAttr.url, productAttr.url) &&
+                nonEmptyEqual(cartItemAttr.price, productAttr.price);
     }
 
     /**
