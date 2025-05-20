@@ -1,9 +1,9 @@
 package pages;
 
+import elements.ProductCard;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.testng.Assert;
 
 import java.util.List;
 
@@ -16,7 +16,16 @@ public class CartPage {
     // <a class="btn btn-cart-remove" href="http://www.periplus.com/checkout/cart?remove=43518459">Remove</a>
     private final By removeButtonBy = By.className("btn-cart-remove");
 
-    public CartPage(WebDriver driver){
+    // <p class="product-name limit-lines"></p>
+    private final By itemNameBy = By.className("product-name");
+    // <a href="" style="font-size:15px;"></a>
+    private final By itemLinkBy = By.xpath(".//a");
+    // <div class="col-lg-10 col-9"></div>
+    private final By itemCardBy = By.xpath("./../..");
+    // <div class="row"></div>
+    private final By itemPriceBy = By.xpath(".//div[3]");
+
+    public CartPage(WebDriver driver) {
         if (!pageUrl.equals(driver.getCurrentUrl())) {
             driver.get(pageUrl);
         }
@@ -26,21 +35,16 @@ public class CartPage {
     /**
      * Get item from cart
      *
-     * @param productUrl - change later
+     * @param product - change later
      * @return WebElement object
      */
-    public WebElement getCartItem(String productUrl) {
-        List<WebElement> checkoutItems = driver.findElements(checkoutItemsBy);
+    public WebElement getCartItem(ProductCard product) {
+        List<WebElement> cartItems = driver.findElements(checkoutItemsBy);
 
-        for (WebElement checkoutItem: checkoutItems) {
-            WebElement checkoutName = checkoutItem.findElement(By.className("product-name"));
-            WebElement checkoutLink = checkoutName.findElement(By.xpath(".//a"));
-            String checkoutUrl = checkoutLink.getDomProperty("href");
-
-            Assert.assertNotNull(productUrl, "Target URL was null");
-            if (productUrl.equals(checkoutUrl)) {
-                System.out.println("Matching URL Found: " + checkoutUrl);
-                return checkoutItem;
+        for (WebElement cartItem : cartItems) {
+            ProductCard item = saveAttributes(cartItem);
+            if (compareItemWithProduct(item, product)) {
+                return cartItem;
             }
         }
 
@@ -55,5 +59,46 @@ public class CartPage {
     public void removeCartItem(WebElement item) {
         WebElement removeButton = item.findElement(removeButtonBy);
         removeButton.click();
+    }
+
+    /**
+     * Save attributes of product
+     *
+     * @param item - product which attributes to save
+     * @return ProductCard object
+     */
+    private ProductCard saveAttributes(WebElement item) {
+        WebElement itemName = item.findElement(itemNameBy);
+        WebElement itemLink = itemName.findElement(itemLinkBy);
+        WebElement itemPrice = itemName.findElement(itemCardBy).findElement(itemPriceBy);
+
+        String title = itemLink.getDomProperty("innerText");
+        String url = itemLink.getDomProperty("href");
+        String price = itemPrice.getDomProperty("innerText");
+
+        return new ProductCard(title, url, price);
+    }
+
+    /**
+     * Compare cart item attributes with product attributes
+     *
+     * @param cartItem    - item attributes from cart
+     * @param productCard - product attributes to compare
+     * @return true if equal
+     */
+    private boolean compareItemWithProduct(ProductCard cartItem, ProductCard productCard) {
+        return nonEmptyEqual(cartItem.title, productCard.title) &&
+                nonEmptyEqual(cartItem.url, productCard.url);
+    }
+
+    /**
+     * Compare two non-empty string
+     *
+     * @param s1 - first string
+     * @param s2 - second string
+     * @return true if equal
+     */
+    private boolean nonEmptyEqual(String s1, String s2) {
+        return !s1.isEmpty() && !s2.isEmpty() && s1.equals(s2);
     }
 }

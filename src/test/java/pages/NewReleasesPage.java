@@ -1,6 +1,7 @@
 package pages;
 
 import elements.Preloader;
+import elements.ProductCard;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -15,6 +16,15 @@ public class NewReleasesPage {
     private final By productBy = By.className("single-product");
     // <a title="Add to cart" onclick="update_total(43518459)" class="addtocart addtocart-cat"></a>
     private final By addToCartBy = By.className("addtocart");
+
+    // <div class="product-content product-contents title-product-cat"></div>
+    private final By productNameBy = By.className("title-product-cat");
+    // <a href=""></a>
+    private final By productLinkBy = By.xpath(".//h3/a");
+    // <div class="product-price" style="margin: 6px 0 6px 0;"></div>
+    private final By productPriceDivBy = By.className("product-price");
+    // <div style="font-size:100%;color:#000000;font-weight:600;">Rp 189,000</div>
+    private final By productPriceBy = By.xpath(".//div");
 
     public NewReleasesPage(WebDriver driver){
         if (!pageUrl.equals(driver.getCurrentUrl())) {
@@ -42,5 +52,22 @@ public class NewReleasesPage {
         Preloader.waitPreloader(driver);
         WebElement addToCart = product.findElement(addToCartBy);
         addToCart.click();
+    }
+
+    /**
+     * Save attributes of product
+     *
+     * @param product - product which attributes to save
+     * @return ProductCard object
+     */
+    public ProductCard saveAttributes(WebElement product) {
+        WebElement productName = product.findElement(productNameBy).findElement(productLinkBy);
+        WebElement productPrice = product.findElement(productPriceDivBy).findElement(productPriceBy);
+
+        String title = productName.getDomProperty("innerText");
+        String url = productName.getDomProperty("href");
+        String price = productPrice.getDomProperty("innerText");
+
+        return new ProductCard(title, url, price);
     }
 }

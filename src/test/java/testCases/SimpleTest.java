@@ -1,7 +1,7 @@
 package testCases;
 
 import elements.Preloader;
-import org.openqa.selenium.By;
+import elements.ProductCard;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -40,17 +40,13 @@ public class SimpleTest {
         WebElement product = SimpleTestHelper.getItemNotInCart(driver);
 
         NewReleasesPage newReleasesPage = new NewReleasesPage(driver);
+        ProductCard productCard = newReleasesPage.saveAttributes(product);
         newReleasesPage.addItemToCart(product);
 
-        WebElement productName = product.findElement(By.className("title-product-cat"));
-        WebElement productLink = productName.findElement(By.xpath(".//h3/a"));
-        String productUrl = productLink.getDomProperty("href");
-        System.out.println("Target URL: " + productUrl);
-
-        Preloader.waitPreloader(driver);
         CartPage cartPage = new CartPage(driver);
-        tempChosenItem = cartPage.getCartItem(productUrl);
-        Assert.assertNotNull(tempChosenItem, "Matching URL was not found");
+        Preloader.waitPreloader(driver); // this might be needed
+        tempChosenItem = cartPage.getCartItem(productCard);
+        Assert.assertNotNull(tempChosenItem, "Matching item was not found");
     }
 
     @AfterMethod
