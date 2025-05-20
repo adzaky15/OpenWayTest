@@ -1,7 +1,7 @@
 package pages;
 
 import elements.Preloader;
-import elements.ProductCard;
+import elements.ItemAttr;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -29,6 +29,7 @@ public class NewReleasesPage {
     public NewReleasesPage(WebDriver driver){
         if (!pageUrl.equals(driver.getCurrentUrl())) {
             driver.get(pageUrl);
+            Preloader.waitPreloader(driver);
         }
         this.driver = driver;
     }
@@ -52,6 +53,8 @@ public class NewReleasesPage {
         Preloader.waitPreloader(driver);
         WebElement addToCart = product.findElement(addToCartBy);
         addToCart.click();
+
+        Preloader.waitPreloader(driver);
     }
 
     /**
@@ -60,7 +63,7 @@ public class NewReleasesPage {
      * @param product - product which attributes to save
      * @return ProductCard object
      */
-    public ProductCard saveAttributes(WebElement product) {
+    public ItemAttr saveAttributes(WebElement product) {
         WebElement productName = product.findElement(productNameBy).findElement(productLinkBy);
         WebElement productPrice = product.findElement(productPriceDivBy).findElement(productPriceBy);
 
@@ -68,6 +71,6 @@ public class NewReleasesPage {
         String url = productName.getDomProperty("href");
         String price = productPrice.getDomProperty("innerText");
 
-        return new ProductCard(title, url, price);
+        return new ItemAttr(title, url, price);
     }
 }

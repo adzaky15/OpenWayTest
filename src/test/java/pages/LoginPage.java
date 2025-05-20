@@ -22,6 +22,7 @@ public class LoginPage {
     public LoginPage(WebDriver driver){
         if (!pageUrl.equals(driver.getCurrentUrl())) {
             driver.get(pageUrl);
+            Preloader.waitPreloader(driver);
         }
         this.driver = driver;
     }

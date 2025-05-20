@@ -1,7 +1,6 @@
 package testCases;
 
-import elements.Preloader;
-import elements.ProductCard;
+import elements.ItemAttr;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -40,12 +39,11 @@ public class SimpleTest {
         WebElement product = SimpleTestHelper.getItemNotInCart(driver);
 
         NewReleasesPage newReleasesPage = new NewReleasesPage(driver);
-        ProductCard productCard = newReleasesPage.saveAttributes(product);
         newReleasesPage.addItemToCart(product);
 
+        ItemAttr productAttr = newReleasesPage.saveAttributes(product);
         CartPage cartPage = new CartPage(driver);
-        Preloader.waitPreloader(driver); // this might be needed
-        tempChosenItem = cartPage.getCartItem(productCard);
+        tempChosenItem = cartPage.getCartItem(productAttr);
         Assert.assertNotNull(tempChosenItem, "Matching item was not found");
     }
 

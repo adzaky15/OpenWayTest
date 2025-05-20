@@ -1,6 +1,7 @@
 package pages;
 
-import elements.ProductCard;
+import elements.ItemAttr;
+import elements.Preloader;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -28,6 +29,7 @@ public class CartPage {
     public CartPage(WebDriver driver) {
         if (!pageUrl.equals(driver.getCurrentUrl())) {
             driver.get(pageUrl);
+            Preloader.waitPreloader(driver);
         }
         this.driver = driver;
     }
@@ -38,11 +40,11 @@ public class CartPage {
      * @param product - change later
      * @return WebElement object
      */
-    public WebElement getCartItem(ProductCard product) {
+    public WebElement getCartItem(ItemAttr product) {
         List<WebElement> cartItems = driver.findElements(checkoutItemsBy);
 
         for (WebElement cartItem : cartItems) {
-            ProductCard item = saveAttributes(cartItem);
+            ItemAttr item = saveAttributes(cartItem);
             if (compareItemWithProduct(item, product)) {
                 return cartItem;
             }
@@ -59,6 +61,8 @@ public class CartPage {
     public void removeCartItem(WebElement item) {
         WebElement removeButton = item.findElement(removeButtonBy);
         removeButton.click();
+
+        Preloader.waitPreloader(driver);
     }
 
     /**
@@ -67,7 +71,7 @@ public class CartPage {
      * @param item - product which attributes to save
      * @return ProductCard object
      */
-    private ProductCard saveAttributes(WebElement item) {
+    private ItemAttr saveAttributes(WebElement item) {
         WebElement itemName = item.findElement(itemNameBy);
         WebElement itemLink = itemName.findElement(itemLinkBy);
         WebElement itemPrice = itemName.findElement(itemCardBy).findElement(itemPriceBy);
@@ -76,19 +80,19 @@ public class CartPage {
         String url = itemLink.getDomProperty("href");
         String price = itemPrice.getDomProperty("innerText");
 
-        return new ProductCard(title, url, price);
+        return new ItemAttr(title, url, price);
     }
 
     /**
      * Compare cart item attributes with product attributes
      *
      * @param cartItem    - item attributes from cart
-     * @param productCard - product attributes to compare
+     * @param itemAttr - product attributes to compare
      * @return true if equal
      */
-    private boolean compareItemWithProduct(ProductCard cartItem, ProductCard productCard) {
-        return nonEmptyEqual(cartItem.title, productCard.title) &&
-                nonEmptyEqual(cartItem.url, productCard.url);
+    private boolean compareItemWithProduct(ItemAttr cartItem, ItemAttr itemAttr) {
+        return nonEmptyEqual(cartItem.title, itemAttr.title) &&
+                nonEmptyEqual(cartItem.url, itemAttr.url);
     }
 
     /**
