@@ -56,6 +56,7 @@ public class CartPage {
         List<WebElement> cartItems = driver.findElements(checkoutItemsBy);
 
         for (WebElement cartItem : cartItems) {
+            wait.until(ExpectedConditions.visibilityOf(cartItem));
             if (PagesHelper.compareItemWithProduct(saveAttributes(cartItem), product)) {
                 return cartItem;
             }

@@ -1,6 +1,7 @@
 package testCases;
 
 import elements.ItemAttr;
+import listeners.SimpleTestListener;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -9,6 +10,7 @@ import org.testng.annotations.*;
 import pages.CartPage;
 import pages.NewReleasesPage;
 
+@Listeners(SimpleTestListener.class)
 public class SimpleTest {
     String email = "tnuoccalaeraton25@gmail.com";
     String password = "Test5Email25";

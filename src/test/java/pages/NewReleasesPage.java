@@ -66,6 +66,7 @@ public class NewReleasesPage {
         List<WebElement> productItems = productList.findElements(productBy);
 
         for (WebElement product : productItems) {
+            wait.until(ExpectedConditions.visibilityOf(product));
             if (PagesHelper.compareItemWithProduct(saveAttributes(product), productAttr)) {
                 return product;
             }
