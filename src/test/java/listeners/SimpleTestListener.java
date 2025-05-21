@@ -30,7 +30,7 @@ public class SimpleTestListener implements ITestListener {
     @Override
     public void onTestSuccess(ITestResult result) {
         String testName = result.getMethod().getMethodName();
-        String targetPath = "%s/%s_SUCCESS.png";
+        String targetPath = "%s/%s_PASS.png";
         File srcFile = ((TakesScreenshot) SimpleTest.driver).getScreenshotAs(OutputType.FILE);
         File destFile = new File(String.format(targetPath, folderName, testName));
 
