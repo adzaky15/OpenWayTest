@@ -6,6 +6,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
+import org.testng.ITestContext;
 import org.testng.annotations.*;
 import pages.CartPage;
 import pages.NewReleasesPage;
@@ -34,7 +35,7 @@ public class SimpleTest {
     }
 
     @Test(description = "add item to cart from new releases page")
-    public void addToCartTest() {
+    public void addToCartTest(ITestContext context) {
         // given
         SimpleTestHelper.validLoginSequence(driver, email, password);
         WebElement product = SimpleTestHelper.getProductNotInCart(driver);
@@ -50,6 +51,7 @@ public class SimpleTest {
         Assert.assertNotNull(item, "Matching item was not found");
 
         tempItemAttr = cartPage.saveAttributes(item);
+        context.setAttribute("chosenItem", tempItemAttr); // pass to listener
         Assert.assertEquals(productAttr.title, tempItemAttr.title, "Product title does not match");
         Assert.assertEquals(productAttr.url, tempItemAttr.url, "Product url does not match");
         Assert.assertEquals(productAttr.price, tempItemAttr.price, "Product price does not match");

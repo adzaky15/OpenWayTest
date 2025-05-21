@@ -1,10 +1,15 @@
 package listeners;
 
+import elements.ItemAttr;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.io.FileHandler;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
+import pages.CartPage;
 import testCases.SimpleTest;
 
 import java.io.File;
@@ -18,24 +23,41 @@ public class SimpleTestListener implements ITestListener {
 
     @Override
     public void onTestFailure(ITestResult result) {
-        String testName = result.getMethod().getMethodName();
         String targetPath = "%s/%s_FAIL.png";
-        File srcFile = ((TakesScreenshot) SimpleTest.driver).getScreenshotAs(OutputType.FILE);
+
+        captureAndSave(SimpleTest.driver, result, targetPath);
+    }
+
+    @Override
+    public void onTestSuccess(ITestResult result) {
+        String targetPath = "%s/%s_PASS.png";
+
+        captureAndSave(SimpleTest.driver, result, targetPath);
+    }
+
+    private void captureAndSave(WebDriver driver, ITestResult result, String targetPath) {
+        String testName = result.getMethod().getMethodName();
+
+        scrollToElem(driver, result);
+        File srcFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
         File destFile = new File(String.format(targetPath, folderName, testName));
 
         createOrClearDir(testName);
         saveScreenshot(srcFile, destFile);
     }
 
-    @Override
-    public void onTestSuccess(ITestResult result) {
-        String testName = result.getMethod().getMethodName();
-        String targetPath = "%s/%s_PASS.png";
-        File srcFile = ((TakesScreenshot) SimpleTest.driver).getScreenshotAs(OutputType.FILE);
-        File destFile = new File(String.format(targetPath, folderName, testName));
+    private void scrollToElem(WebDriver driver, ITestResult result) {
+        ItemAttr targetAttr = (ItemAttr) result.getTestContext().getAttribute("chosenItem");
+        if (targetAttr == null) {
+            return;
+        }
 
-        createOrClearDir(testName);
-        saveScreenshot(srcFile, destFile);
+        WebElement targetElem = new CartPage(driver).getCartItem(targetAttr);
+        if (targetElem == null) {
+            return;
+        }
+
+        new Actions(driver).moveToElement(targetElem).perform();
     }
 
     private void createOrClearDir(String methodName) {
