@@ -18,7 +18,7 @@ public class NewReleasesPage {
 
     private final static String pageUrl = "https://www.periplus.com/index.php?route=product/category&anl=103";
     private final static int addToCartInc = 1;
-    private final static Duration defaultWait = Duration.ofSeconds(20);
+    private final static Duration defaultWait = Duration.ofSeconds(10);
 
     // <div class="row row-category row-categor-grid"></div>
     private final By productListBy = By.xpath("/html/body/section/div/div/div[3]/div[3]");

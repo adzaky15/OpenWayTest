@@ -19,7 +19,7 @@ public class CartPage {
     protected Wait<WebDriver> wait;
 
     private final static String pageUrl = "https://www.periplus.com/checkout/cart";
-    private final static Duration defaultWait = Duration.ofSeconds(20);
+    private final static Duration defaultWait = Duration.ofSeconds(10);
 
     // <div class="row row-cart-product"></div>
     private final By checkoutItemsBy = By.className("row-cart-product");

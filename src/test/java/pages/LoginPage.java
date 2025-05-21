@@ -18,7 +18,7 @@ public class LoginPage {
     protected Wait<WebDriver> wait;
 
     private final static String pageUrl = "https://www.periplus.com/account/Login";
-    private final static Duration defaultWait = Duration.ofSeconds(20);
+    private final static Duration defaultWait = Duration.ofSeconds(10);
 
     // <input name="email" value="" type="email" required="">
     private final By emailBy = By.name("email");

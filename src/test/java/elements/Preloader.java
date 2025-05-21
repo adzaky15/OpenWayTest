@@ -8,7 +8,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 
 public class Preloader {
-    private final static Duration defaultWait = Duration.ofSeconds(20);
+    private final static Duration defaultWait = Duration.ofSeconds(10);
     private final static By preloaderBy = By.className("preloader");
 
     public static void waitPreloader(WebDriver driver) {
