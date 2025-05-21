@@ -5,11 +5,20 @@ import elements.ItemAttr;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
+import java.util.List;
 
 public class NewReleasesPage {
     protected WebDriver driver;
-    String pageUrl = "https://www.periplus.com/index.php?route=product/category&anl=103";
-    int addToCartInc = 1;
+    protected Wait<WebDriver> wait;
+
+    private final static String pageUrl = "https://www.periplus.com/index.php?route=product/category&anl=103";
+    private final static int addToCartInc = 1;
+    private final static Duration defaultWait = Duration.ofSeconds(20);
 
     // <div class="row row-category row-categor-grid"></div>
     private final By productListBy = By.xpath("/html/body/section/div/div/div[3]/div[3]");
@@ -33,16 +42,36 @@ public class NewReleasesPage {
             Preloader.waitPreloader(driver);
         }
         this.driver = driver;
+        this.wait = new WebDriverWait(driver, defaultWait);
     }
 
     /**
-     * Return first item on list
+     * Return first product on list
      *
      * @return WebElement object
      */
-    public WebElement getFirstItem() {
+    public WebElement getFirstProduct() {
         WebElement productList = driver.findElement(productListBy);
         return productList.findElement(productBy);
+    }
+
+    /**
+     * Get product from product list
+     *
+     * @param productAttr - product attributes to find
+     * @return WebElement object
+     */
+    public WebElement getProductByAttr(ItemAttr productAttr) {
+        WebElement productList = driver.findElement(productListBy);
+        List<WebElement> productItems = productList.findElements(productBy);
+
+        for (WebElement product : productItems) {
+            if (PagesHelper.compareItemWithProduct(saveAttributes(product), productAttr)) {
+                return product;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -51,8 +80,8 @@ public class NewReleasesPage {
      * @param product - product to add
      */
     public void addItemToCart(WebElement product) {
-        Preloader.waitPreloader(driver);
         WebElement addToCart = product.findElement(addToCartBy);
+        wait.until(ExpectedConditions.elementToBeClickable(addToCart));
         addToCart.click();
 
         Preloader.waitPreloader(driver);

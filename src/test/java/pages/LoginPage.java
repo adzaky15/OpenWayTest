@@ -3,13 +3,22 @@ package pages;
 import elements.Preloader;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 
 /**
  * Page Object encapsulates the Login page.
  */
 public class LoginPage {
     protected WebDriver driver;
-    String pageUrl = "https://www.periplus.com/account/Login";
+    protected Wait<WebDriver> wait;
+
+    private final static String pageUrl = "https://www.periplus.com/account/Login";
+    private final static Duration defaultWait = Duration.ofSeconds(20);
 
     // <input name="email" value="" type="email" required="">
     private final By emailBy = By.name("email");
@@ -25,6 +34,7 @@ public class LoginPage {
             Preloader.waitPreloader(driver);
         }
         this.driver = driver;
+        this.wait = new WebDriverWait(driver, defaultWait);
     }
 
     /**
@@ -37,7 +47,9 @@ public class LoginPage {
     public IndexPage loginValidUser(String email, String password) {
         driver.findElement(emailBy).sendKeys(email);
         driver.findElement(passwordBy).sendKeys(password);
-        driver.findElement(signinBy).click();
+        WebElement submitBtn = driver.findElement(signinBy);
+        wait.until(ExpectedConditions.elementToBeClickable(submitBtn));
+        submitBtn.click();
 
         Preloader.waitPreloader(driver);
 

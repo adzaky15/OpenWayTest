@@ -6,13 +6,20 @@ import elements.Preloader;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
 public class CartPage {
     protected WebDriver driver;
-    String pageUrl = "https://www.periplus.com/checkout/cart";
+    protected Wait<WebDriver> wait;
+
+    private final static String pageUrl = "https://www.periplus.com/checkout/cart";
+    private final static Duration defaultWait = Duration.ofSeconds(20);
 
     // <div class="row row-cart-product"></div>
     private final By checkoutItemsBy = By.className("row-cart-product");
@@ -36,6 +43,7 @@ public class CartPage {
             Preloader.waitPreloader(driver);
         }
         this.driver = driver;
+        this.wait = new WebDriverWait(driver, defaultWait);
     }
 
     /**
@@ -48,7 +56,7 @@ public class CartPage {
         List<WebElement> cartItems = driver.findElements(checkoutItemsBy);
 
         for (WebElement cartItem : cartItems) {
-            if (compareItemWithProduct(saveAttributes(cartItem), product)) {
+            if (PagesHelper.compareItemWithProduct(saveAttributes(cartItem), product)) {
                 return cartItem;
             }
         }
@@ -63,6 +71,7 @@ public class CartPage {
      */
     public void removeCartItem(WebElement item) {
         WebElement removeButton = item.findElement(removeButtonBy);
+        wait.until(ExpectedConditions.elementToBeClickable(removeButton));
         removeButton.click();
 
         Preloader.waitPreloader(driver);
@@ -89,29 +98,5 @@ public class CartPage {
                 .orElse(0);
 
         return new ItemAttr(title, url, price, quantity);
-    }
-
-    /**
-     * Compare cart item attributes with product attributes
-     *
-     * @param cartItemAttr    - cart item attributes from cart
-     * @param productAttr - product attributes to compare
-     * @return true if equal
-     */
-    private boolean compareItemWithProduct(ItemAttr cartItemAttr, ItemAttr productAttr) {
-        return nonEmptyEqual(cartItemAttr.title, productAttr.title) &&
-                nonEmptyEqual(cartItemAttr.url, productAttr.url) &&
-                nonEmptyEqual(cartItemAttr.price, productAttr.price);
-    }
-
-    /**
-     * Compare two non-empty string
-     *
-     * @param s1 - first string
-     * @param s2 - second string
-     * @return true if equal
-     */
-    private boolean nonEmptyEqual(String s1, String s2) {
-        return !s1.isEmpty() && !s2.isEmpty() && s1.equals(s2);
     }
 }

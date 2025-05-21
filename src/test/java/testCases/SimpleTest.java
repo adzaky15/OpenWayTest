@@ -9,8 +9,6 @@ import org.testng.annotations.*;
 import pages.CartPage;
 import pages.NewReleasesPage;
 
-import java.util.concurrent.TimeUnit;
-
 public class SimpleTest {
     String email = "tnuoccalaeraton25@gmail.com";
     String password = "Test5Email25";
@@ -37,7 +35,7 @@ public class SimpleTest {
     public void addToCartTest() {
         // given
         SimpleTestHelper.validLoginSequence(driver, email, password);
-        WebElement product = SimpleTestHelper.getItemNotInCart(driver);
+        WebElement product = SimpleTestHelper.getProductNotInCart(driver);
 
         // when
         NewReleasesPage newReleasesPage = new NewReleasesPage(driver);
@@ -57,9 +55,8 @@ public class SimpleTest {
     }
 
     @AfterMethod
-    public void closeBrowser() throws InterruptedException {
-        // Remove the checkout item after 10 seconds
-        TimeUnit.SECONDS.sleep(10);
+    public void closeBrowser() {
+        // Remove the recently added cart item
         if (tempItemAttr != null) {
             SimpleTestHelper.removeItemByAttr(driver, tempItemAttr);
             tempItemAttr = null;

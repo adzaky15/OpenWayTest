@@ -7,8 +7,9 @@ import org.openqa.selenium.WebElement;
 
 public class IndexPage {
     protected WebDriver driver;
-    String pageUrl = "https://www.periplus.com/_index_/index";
-    String welcomeMessagePrefix = "Hi,";
+
+    private final static String pageUrl = "https://www.periplus.com/_index_/index";
+    private final static String welcomeMessagePrefix = "Hi,";
 
     // <span id="nav-signin-text" class="nav-button-em"></span>
     private final By loginLinkBy = By.id("nav-signin-text");

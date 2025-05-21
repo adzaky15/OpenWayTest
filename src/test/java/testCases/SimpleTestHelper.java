@@ -12,13 +12,16 @@ import pages.NewReleasesPage;
 public class SimpleTestHelper {
     public static void validLoginSequence(WebDriver driver, String email, String password) {
         IndexPage indexPage = new LoginPage(driver).loginValidUser(email, password);
-        Assert.assertTrue(indexPage.verifyLogin(), "login sequence failed");
+        Assert.assertTrue(indexPage.verifyLogin(), "Precondition: login sequence failed");
     }
 
-    public static WebElement getItemNotInCart(WebDriver driver) {
+    public static WebElement getProductNotInCart(WebDriver driver) {
         NewReleasesPage newReleasesPage = new NewReleasesPage(driver);
-        WebElement product = newReleasesPage.getFirstItem();
-//        removeItemByAttr(driver, newReleasesPage.saveAttributes(product));
+        ItemAttr productAttr = newReleasesPage.saveAttributes(newReleasesPage.getFirstProduct());
+        removeItemByAttr(driver, productAttr);
+
+        WebElement product = new NewReleasesPage(driver).getProductByAttr(productAttr);
+        Assert.assertNotNull(product, "Precondition: product staging sequence failed");
 
         return product;
     }
