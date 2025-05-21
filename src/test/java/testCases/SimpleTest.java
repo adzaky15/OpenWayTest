@@ -15,7 +15,7 @@ public class SimpleTest {
     String email = "tnuoccalaeraton25@gmail.com";
     String password = "Test5Email25";
 
-    WebDriver driver;
+    public static WebDriver driver; // exposed to listener
     String baseUrl = "https://www.periplus.com/";
 
     ItemAttr tempItemAttr; // Item to remove later
@@ -33,7 +33,7 @@ public class SimpleTest {
         driver.get(baseUrl);
     }
 
-    @Test(description = "add to cart from new releases")
+    @Test(description = "add item to cart from new releases page")
     public void addToCartTest() {
         // given
         SimpleTestHelper.validLoginSequence(driver, email, password);
